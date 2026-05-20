@@ -52,6 +52,14 @@ The inverse pattern. Standard INT4 outperforms MXFP4 formats for Qwen MoE:
 
 **Contrast with Granite:** IBM ships their models *already in MXFP4* with their own calibration. The mlx-community just wraps these. The kernel path is well-tested.
 
+### General principle
+
+> **Whichever format the model's primary release pipeline used tends to win on MLX** — that is where the quantization calibration effort and MLX kernel optimisation effort both landed.
+
+- Granite 4.1 → IBM released in MXFP4 → mxfp4 wins
+- Qwen3.6-35B-A3B → community-quantised, mature tooling is INT4 → 4bit wins
+- When evaluating a new model: check what format the original authors released or recommended before assuming MXFP4 is superior.
+
 ### OptiQ vs standard 4bit
 
 OptiQ uses an optimisation pass to minimise weight reconstruction error (similar to GPTQ), giving marginally better perplexity at the same bit width. However:
@@ -138,7 +146,18 @@ Note: these PP t/s values were measured at short prompts. Real degradation at 12
 
 ---
 
-## 4. Agentic Scoring
+## 4. Downloaded But Not Benchmarked
+
+The following variants appeared in the vMLX download queue during this session but were not benchmarked:
+
+| Model | Notes |
+|---|---|
+| Qwen3.6-35B-A3B-MLX-MXFP4 | Standard MXFP4 from mlx-community. Expected to perform similar to UD-MXFP4_K_XL (~55–60 TPS). Lower priority given 4bit already superior. |
+| Qwen3.6-35B-A3B-RotorQuant-MLX-MXFP4 | RotorQuant applies rotation-based weight transformation before quantization to reduce outliers. May improve quality over standard MXFP4 at similar speed. Worth testing if MXFP4 quality is needed. |
+
+---
+
+## 5. Agentic Scoring
 
 Agentic loops (opencode, tool-call agents) weight metrics differently from raw generation:
 
